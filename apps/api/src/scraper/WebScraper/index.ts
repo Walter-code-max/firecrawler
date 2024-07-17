@@ -19,6 +19,7 @@ import { generateCompletions } from "../../lib/LLM-extraction";
 import { getWebScraperQueue } from "../../../src/services/queue-service";
 import { fetchAndProcessDocx } from "./utils/docxProcessor";
 import { getAdjustedMaxDepth, getURLDepth } from "./utils/maxDepthUtils";
+import { checksRedirect } from "../../lib/checkRedirects";
 
 export class WebScraperDataProvider {
   private bullJobId: string;
@@ -210,7 +211,7 @@ export class WebScraperDataProvider {
     inProgress?: (progress: Progress) => void
   ): Promise<Document[]> {
     const links = this.urls;
-
+    
     let documents = await this.processLinks(links, inProgress);
     return documents;
   }

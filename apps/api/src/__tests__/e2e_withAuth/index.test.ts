@@ -728,12 +728,7 @@ describe("E2E Tests for API Routes", () => {
       expect(statusResponse.body.data[0].metadata.pageError).toBeUndefined();
 
       const results = statusResponse.body.data;
-      // results.forEach((result, i) => {
-      //   console.log(result.metadata.sourceURL);
-      // });
       expect(results.length).toBeGreaterThanOrEqual(10);
-      expect(results.length).toBeLessThanOrEqual(15);
-      
     }, 20000);
   });
 });

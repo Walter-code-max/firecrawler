@@ -8,6 +8,8 @@ import { scrapSingleUrl } from "./single_url";
 import robotsParser from "robots-parser";
 import { getURLDepth } from "./utils/maxDepthUtils";
 import { axiosTimeout } from "../../../src/lib/timeout";
+import { checksRedirect } from "../../lib/checkRedirects";
+import { normalizeUrl } from "../../lib/normalizeUrl";
 
 export class WebCrawler {
   private initialUrl: string;
@@ -133,6 +135,14 @@ export class WebCrawler {
     limit: number = 10000,
     maxDepth: number = 10
   ): Promise<{ url: string, html: string }[]> {
+    const initialUrl = this.initialUrl
+    this.initialUrl = await checksRedirect(this.initialUrl);
+    if (normalizeUrl(initialUrl) != normalizeUrl(this.initialUrl)) {
+      this.baseUrl = new URL(this.initialUrl).origin;
+      this.robotsTxtUrl = `${this.baseUrl}/robots.txt`;
+      this.robots = robotsParser(this.robotsTxtUrl, "");
+    }
+    
     // Fetch and parse robots.txt
     try {
       const response = await axios.get(this.robotsTxtUrl, { timeout: axiosTimeout });
